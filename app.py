@@ -3,6 +3,7 @@ from flask import Flask
 from flask import redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
+import db
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -26,13 +27,10 @@ def create_user():
     password_hash = generate_password_hash(password1)
 
     sql = 'INSERT INTO users (username, password_hash) VALUES (?, ?)'
-    db = sqlite3.connect('database.db')
     try:
         db.execute(sql, [username, password_hash])
-        db.commit()
     except sqlite3.IntegrityError:
         return 'Virhe: Tunnus on jo varattu'
-    db.close()
 
     return 'Tunnuksen luominen onnistui'
 
@@ -46,9 +44,7 @@ def log_user_in():
     password = request.form['password']
 
     sql = 'SELECT password_hash FROM users WHERE username = ?'
-    db = sqlite3.connect('database.db')
-    password_hash = db.execute(sql, [username]).fetchone()[0]
-    db.close()
+    password_hash = db.query(sql, [username])[0][0]
 
     if check_password_hash(password_hash, password):
         session['username'] = username
@@ -60,3 +56,7 @@ def log_user_in():
 def logout():
     del session['username']
     return redirect('/')
+
+@app.teardown_appcontext
+def teardown_appcontext(exception):
+    db.close_connection()
