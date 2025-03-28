@@ -43,10 +43,11 @@ def log_user_in():
     username = request.form['username']
     password = request.form['password']
 
-    sql = 'SELECT password_hash FROM users WHERE username = ?'
-    password_hash = db.query(sql, [username])[0][0]
+    sql = 'SELECT id, password_hash FROM users WHERE username = ?'
+    user_id, password_hash = db.query(sql, [username])[0]
 
     if check_password_hash(password_hash, password):
+        session['user_id'] = user_id
         session['username'] = username
         return redirect('/')
     else:
@@ -54,8 +55,30 @@ def log_user_in():
 
 @app.route('/logout')
 def logout():
+    del session['user_id']
     del session['username']
     return redirect('/')
+
+@app.route('/new-image', methods=['GET', 'POST'])
+def new_image():
+    if request.method == 'GET':
+        return render_template('new_image.html')
+
+    if request.method == 'POST':
+        file = request.files['image']
+        if not file.filename.endswith(('.jpg', '.png')):
+            return 'Virhe: Väärä tiedostomuoto'
+
+        image = file.read()
+        title = request.form['title']
+        description = request.form['description']
+        user_id = session['user_id']
+
+        sql = """INSERT INTO images (title, image, description, sent_at, user_id)
+                 VALUES (?, ?, ?, datetime('now'), ?)"""
+        db.execute(sql, [title, image, description, user_id])
+
+        return 'Kuvan lähettäminen onnistui'
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):

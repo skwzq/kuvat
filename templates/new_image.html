@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Uusi kuva</title>
+  </head>
+
+  <body>
+    <p>
+      Kuvan tulee olla jpg- tai png-tiedosto.
+    </p>
+    <form action="/new-image" method="post" enctype="multipart/form-data">
+      <p>
+        Otsikko: <input type="text" name="title" />
+      </p>
+      <p>
+        Kuva: <input type="file" name="image" accept=".jpg,.png" />
+      </p>
+      <p>
+        Teksti:<br />
+        <textarea name="description" rows="5" cols="40"></textarea>
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
+  </body>
+
+</html>
