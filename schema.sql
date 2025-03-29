@@ -7,6 +7,7 @@ CREATE TABLE users (
 CREATE TABLE images (
     id INTEGER PRIMARY KEY,
     data BLOB
+    format TEXT
 );
 
 CREATE TABLE posts (

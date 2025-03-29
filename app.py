@@ -66,7 +66,11 @@ def new_image():
 
     if request.method == 'POST':
         file = request.files['image']
-        if not file.filename.endswith(('.jpg', '.png')):
+        if file.filename.endswith('.jpg'):
+            file_format = 'jpeg'
+        elif file.filename.endswith('.png'):
+            file_format = 'png'
+        else:
             return 'Virhe: Väärä tiedostomuoto'
 
         image = file.read()
@@ -74,8 +78,8 @@ def new_image():
         description = request.form['description']
         user_id = session['user_id']
 
-        sql = 'INSERT INTO images (data) VALUES (?)'
-        db.execute(sql, [image])
+        sql = 'INSERT INTO images (data, format) VALUES (?, ?)'
+        db.execute(sql, [image, file_format])
 
         sql = """INSERT INTO posts (title, image_id, description, sent_at, user_id)
                  VALUES (?, ?, ?, datetime('now'), ?)"""
