@@ -14,7 +14,7 @@
 
       {% if session.user_id == post.user_id %}
         <br />
-        <a href="/edit/{{ post.id }}">Muokkaa</a>
+        <a href="/edit/{{ post.id }}">Muokkaa</a> | <a href="/remove/{{ post.id }}">Poista</a>
       {% endif %}
     </p>
 

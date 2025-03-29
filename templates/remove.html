@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Poisto</title>
+  </head>
+
+  <body>
+    <form action="/remove/{{ post.id }}" method="post">
+      <p>
+        Haluatko varmasti poistaa kuvan?
+      </p>
+      <input type="submit" name="continue" value="Jatka" />
+      <input type="submit" name="cancel" value="Peruuta" />
+    </form>
+  </body>
+
+</html>

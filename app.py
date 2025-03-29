@@ -125,6 +125,26 @@ def edit_post(post_id):
         db.execute(sql, [title, description, post_id])
         return redirect('/post/' + str(post_id))
 
+@app.route('/remove/<int:post_id>', methods=['GET', 'POST'])
+def remove_post(post_id):
+    sql = 'SELECT id, image_id, user_id FROM posts WHERE id = ?'
+    post = db.query(sql, [post_id])[0]
+    if session['user_id'] != post['user_id']:
+        abort(403)
+
+    if request.method == 'GET':
+        return render_template('remove.html', post=post)
+
+    if request.method == 'POST':
+        if 'continue' in request.form:
+            sql = 'DELETE FROM posts WHERE id = ?'
+            db.execute(sql, [post_id])
+            sql = 'DELETE FROM images WHERE id = ?'
+            db.execute(sql, [post['image_id']])
+            return redirect('/')
+        else:
+            return redirect('/post/' + str(post_id))
+
 @app.teardown_appcontext
 def teardown_appcontext(exception):
     db.close_connection()
