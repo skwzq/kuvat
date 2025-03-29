@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Muokkaus</title>
+  </head>
+
+  <body>
+    <form action="/edit/{{ post.id }}" method="post">
+      <p>
+        Otsikko: <input type="text" name="title" value="{{ post.title }}" />
+      </p>
+      <p>
+        Teksti:<br />
+        <textarea name="description" rows="5" cols="40">{{ post.description }}</textarea>
+      </p>
+      <input type="submit" value="Lähetä" />
+    </form>
+  </body>
+
+</html>

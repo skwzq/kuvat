@@ -11,6 +11,11 @@
 
     <p>
       {{ post.username }}, {{ post.sent_at }}
+
+      {% if session.user_id == post.user_id %}
+        <br />
+        <a href="/edit/{{ post.id }}">Muokkaa</a>
+      {% endif %}
     </p>
 
     <img src="/image/{{ post.image_id }}" />

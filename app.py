@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import make_response, redirect, render_template, request, session
+from flask import abort, make_response, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
@@ -101,11 +101,29 @@ def show_image(image_id):
 
 @app.route('/post/<int:post_id>')
 def show_post(post_id):
-    sql = """SELECT p.title, p.image_id, p.description, p.sent_at, u.username
+    sql = """SELECT p.id, p.title, p.image_id, p.description, p.sent_at, u.username, p.user_id
              FROM posts p, users u
              WHERE p.id = ? AND u.id = p.user_id"""
     post = db.query(sql, [post_id])[0]
     return render_template('post.html', post=post)
+
+@app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    sql = 'SELECT id, title, description, user_id FROM posts WHERE id = ?'
+    post = db.query(sql, [post_id])[0]
+    if session['user_id'] != post['user_id']:
+        abort(403)
+
+    if request.method == 'GET':
+        return render_template('edit.html', post=post)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+
+        sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'
+        db.execute(sql, [title, description, post_id])
+        return redirect('/post/' + str(post_id))
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):
