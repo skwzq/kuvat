@@ -74,9 +74,12 @@ def new_image():
         description = request.form['description']
         user_id = session['user_id']
 
-        sql = """INSERT INTO images (title, image, description, sent_at, user_id)
+        sql = 'INSERT INTO images (data) VALUES (?)'
+        db.execute(sql, [image])
+
+        sql = """INSERT INTO posts (title, image_id, description, sent_at, user_id)
                  VALUES (?, ?, ?, datetime('now'), ?)"""
-        db.execute(sql, [title, image, description, user_id])
+        db.execute(sql, [title, db.last_insert_id(), description, user_id])
 
         return 'Kuvan lähettäminen onnistui'
 
