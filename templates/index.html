@@ -7,24 +7,24 @@
   </head>
 
   <body>
-    {% if session.username %}
+    {% if session.user_id %}
     <p>
-      Olet kirjautunut tunnuksella {{ session.username }}
-    </p>
-    <p>
-      <a href="/new-image">Lähetä kuva</a>
-    </p>
-    <p>
-      <a href="/logout">Kirjaudu ulos</a>
+      <a href="/new-image">Lähetä kuva</a> | <a href="/logout">Kirjaudu ulos</a>
     </p>
     {% else %}
     <p>
-      <a href="/registration">Luo tunnus</a>
-    </p>
-    <p>
-      <a href="/login">Kirjaudu sisään</a>
+      <a href="/registration">Luo tunnus</a> | <a href="/login">Kirjaudu sisään</a>
     </p>
     {% endif %}
+
+    {% for post in posts %}
+    <hr />
+    <p>
+      <a href="/post/{{ post.id }}">{{ post.title }}</a>
+      ({{ post.username }}, {{ post.sent_at }})
+    </p>
+    <img src="/image/{{ post.image_id }}" />
+    {% endfor %}
   </body>
 
 </html>

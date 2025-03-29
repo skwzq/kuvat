@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import make_response, redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
@@ -10,7 +10,12 @@ app.secret_key = config.secret_key
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
+             FROM posts p, users u
+             WHERE u.id = p.user_id
+             ORDER BY p.id DESC"""
+    posts = db.query(sql)
+    return render_template('index.html', posts=posts)
 
 @app.route('/registration')
 def registration():
@@ -48,7 +53,6 @@ def log_user_in():
 
     if check_password_hash(password_hash, password):
         session['user_id'] = user_id
-        session['username'] = username
         return redirect('/')
     else:
         return 'Virhe: Väärä käyttäjätunnus tai salasana'
@@ -56,7 +60,6 @@ def log_user_in():
 @app.route('/logout')
 def logout():
     del session['user_id']
-    del session['username']
     return redirect('/')
 
 @app.route('/new-image', methods=['GET', 'POST'])
@@ -86,6 +89,23 @@ def new_image():
         db.execute(sql, [title, db.last_insert_id(), description, user_id])
 
         return 'Kuvan lähettäminen onnistui'
+
+@app.route('/image/<int:image_id>')
+def show_image(image_id):
+    sql = 'SELECT data, format FROM images WHERE id = ?'
+    image, file_format = db.query(sql, [image_id])[0]
+
+    response = make_response(bytes(image))
+    response.headers.set('Content-Type', 'image/'+file_format)
+    return response
+
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    sql = """SELECT p.title, p.image_id, p.description, p.sent_at, u.username
+             FROM posts p, users u
+             WHERE p.id = ? AND u.id = p.user_id"""
+    post = db.query(sql, [post_id])[0]
+    return render_template('post.html', post=post)
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):
