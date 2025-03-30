@@ -115,7 +115,10 @@ def new_image():
 @app.route('/image/<int:image_id>')
 def show_image(image_id):
     sql = 'SELECT data, format FROM images WHERE id = ?'
-    image, file_format = db.query(sql, [image_id])[0]
+    result = db.query(sql, [image_id])
+    if not result:
+        abort(404)
+    image, file_format = result[0]
 
     response = make_response(bytes(image))
     response.headers.set('Content-Type', 'image/'+file_format)
@@ -126,14 +129,19 @@ def show_post(post_id):
     sql = """SELECT p.id, p.title, p.image_id, p.description, p.sent_at, u.username, p.user_id
              FROM posts p, users u
              WHERE p.id = ? AND u.id = p.user_id"""
-    post = db.query(sql, [post_id])[0]
-    return render_template('post.html', post=post)
+    result = db.query(sql, [post_id])
+    if not result:
+        abort(404)
+    return render_template('post.html', post=result[0])
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @require_login
 def edit_post(post_id):
     sql = 'SELECT id, title, description, user_id FROM posts WHERE id = ?'
-    post = db.query(sql, [post_id])[0]
+    result = db.query(sql, [post_id])
+    if not result:
+        abort(404)
+    post = result[0]
     if session['user_id'] != post['user_id']:
         abort(403)
 
@@ -154,7 +162,10 @@ def edit_post(post_id):
 @require_login
 def remove_post(post_id):
     sql = 'SELECT id, image_id, user_id FROM posts WHERE id = ?'
-    post = db.query(sql, [post_id])[0]
+    result = db.query(sql, [post_id])
+    if not result:
+        abort(404)
+    post = result[0]
     if session['user_id'] != post['user_id']:
         abort(403)
 
