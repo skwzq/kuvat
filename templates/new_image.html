@@ -8,18 +8,18 @@
 
   <body>
     <p>
-      Kuvan tulee olla jpg- tai png-tiedosto.
+      Kuvan tulee olla jpg- tai png-tiedosto, jonka koko on enintään 1 Mt.
     </p>
     <form action="/new-image" method="post" enctype="multipart/form-data">
       <p>
-        Otsikko: <input type="text" name="title" required />
+        Otsikko: <input type="text" name="title" maxlength="100" required />
       </p>
       <p>
         Kuva: <input type="file" name="image" accept=".jpg,.png" required />
       </p>
       <p>
         Teksti:<br />
-        <textarea name="description" rows="5" cols="40"></textarea>
+        <textarea name="description" rows="5" cols="40" maxlength="2000"></textarea>
       </p>
       <input type="submit" value="Lähetä" />
     </form>

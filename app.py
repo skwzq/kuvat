@@ -24,7 +24,7 @@ def registration():
 @app.route('/create-user', methods=['POST'])
 def create_user():
     username = request.form['username']
-    if not username:
+    if not username or len(username) > 20:
         abort(403)
 
     password1 = request.form['password1']
@@ -82,12 +82,14 @@ def new_image():
             return 'Virhe: Väärä tiedostomuoto'
 
         image = file.read()
+        if len(image) > 1024**2:
+            return 'Virhe: Liian suuri tiedosto'
 
         title = request.form['title']
-        if not title:
+        description = request.form['description']
+        if not title or len(title) > 100 or len(description) > 2000:
             abort(403)
 
-        description = request.form['description']
         user_id = session['user_id']
 
         sql = 'INSERT INTO images (data, format) VALUES (?, ?)'
@@ -128,10 +130,9 @@ def edit_post(post_id):
 
     if request.method == 'POST':
         title = request.form['title']
-        if not title:
-            abort(403)
-
         description = request.form['description']
+        if not title or len(title) > 100 or len(description) > 2000:
+            abort(403)
 
         sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'
         db.execute(sql, [title, description, post_id])
