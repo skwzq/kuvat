@@ -24,9 +24,11 @@ def registration():
 @app.route('/create-user', methods=['POST'])
 def create_user():
     username = request.form['username']
+    if not username:
+        abort(403)
+
     password1 = request.form['password1']
     password2 = request.form['password2']
-    
     if password1 != password2:
         return 'Virhe: Salasanat eivät ole samat'
     password_hash = generate_password_hash(password1)
@@ -69,6 +71,9 @@ def new_image():
 
     if request.method == 'POST':
         file = request.files['image']
+        if not file:
+            abort(403)
+
         if file.filename.endswith('.jpg'):
             file_format = 'jpeg'
         elif file.filename.endswith('.png'):
@@ -77,7 +82,11 @@ def new_image():
             return 'Virhe: Väärä tiedostomuoto'
 
         image = file.read()
+
         title = request.form['title']
+        if not title:
+            abort(403)
+
         description = request.form['description']
         user_id = session['user_id']
 
@@ -119,6 +128,9 @@ def edit_post(post_id):
 
     if request.method == 'POST':
         title = request.form['title']
+        if not title:
+            abort(403)
+
         description = request.form['description']
 
         sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'

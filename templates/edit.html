@@ -9,7 +9,7 @@
   <body>
     <form action="/edit/{{ post.id }}" method="post">
       <p>
-        Otsikko: <input type="text" name="title" value="{{ post.title }}" />
+        Otsikko: <input type="text" name="title" value="{{ post.title }}" required />
       </p>
       <p>
         Teksti:<br />
