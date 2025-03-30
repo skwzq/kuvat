@@ -7,15 +7,14 @@
   </head>
 
   <body>
-    {% if session.user_id %}
     <p>
+      <a href="/search">Haku</a> |
+      {% if session.user_id %}
       <a href="/new-image">Lähetä kuva</a> | <a href="/logout">Kirjaudu ulos</a>
-    </p>
-    {% else %}
-    <p>
+      {% else %}
       <a href="/registration">Luo tunnus</a> | <a href="/login">Kirjaudu sisään</a>
+      {% endif %}
     </p>
-    {% endif %}
 
     {% for post in posts %}
     <hr />

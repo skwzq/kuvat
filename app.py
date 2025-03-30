@@ -145,6 +145,20 @@ def remove_post(post_id):
         else:
             return redirect('/post/' + str(post_id))
 
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
+             FROM posts p, users u
+             WHERE u.id = p.user_id
+             AND (p.title LIKE ? OR p.description LIKE ?)
+             ORDER BY p.id DESC"""
+    if query:
+        results = db.query(sql, ['%' + query + '%'] * 2)
+    else:
+        results = []
+    return render_template('search.html', query=query, results=results)
+
 @app.teardown_appcontext
 def teardown_appcontext(exception):
     db.close_connection()
