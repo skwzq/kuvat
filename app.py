@@ -1,3 +1,4 @@
+from functools import wraps
 import sqlite3
 from flask import Flask
 from flask import abort, make_response, redirect, render_template, request, session
@@ -7,6 +8,14 @@ import db
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def require_login(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session:
+            abort(403)
+        return f(*args, **kwargs)
+    return wrapper
 
 @app.route('/')
 def index():
@@ -61,10 +70,12 @@ def log_user_in():
 
 @app.route('/logout')
 def logout():
-    del session['user_id']
+    if 'user_id' in session:
+        del session['user_id']
     return redirect('/')
 
 @app.route('/new-image', methods=['GET', 'POST'])
+@require_login
 def new_image():
     if request.method == 'GET':
         return render_template('new_image.html')
@@ -119,6 +130,7 @@ def show_post(post_id):
     return render_template('post.html', post=post)
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@require_login
 def edit_post(post_id):
     sql = 'SELECT id, title, description, user_id FROM posts WHERE id = ?'
     post = db.query(sql, [post_id])[0]
@@ -139,6 +151,7 @@ def edit_post(post_id):
         return redirect('/post/' + str(post_id))
 
 @app.route('/remove/<int:post_id>', methods=['GET', 'POST'])
+@require_login
 def remove_post(post_id):
     sql = 'SELECT id, image_id, user_id FROM posts WHERE id = ?'
     post = db.query(sql, [post_id])[0]
