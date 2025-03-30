@@ -2,9 +2,11 @@ from functools import wraps
 import sqlite3
 from flask import Flask
 from flask import abort, make_response, redirect, render_template, request, session
-from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
+import images
+import posts
+import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -19,12 +21,8 @@ def require_login(f):
 
 @app.route('/')
 def index():
-    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
-             FROM posts p, users u
-             WHERE u.id = p.user_id
-             ORDER BY p.id DESC"""
-    posts = db.query(sql)
-    return render_template('index.html', posts=posts)
+    posts_list = posts.get_list()
+    return render_template('index.html', posts=posts_list)
 
 @app.route('/registration')
 def registration():
@@ -40,12 +38,8 @@ def create_user():
     password2 = request.form['password2']
     if password1 != password2:
         return 'Virhe: Salasanat eivät ole samat'
-    password_hash = generate_password_hash(password1)
 
-    sql = 'INSERT INTO users (username, password_hash) VALUES (?, ?)'
-    try:
-        db.execute(sql, [username, password_hash])
-    except sqlite3.IntegrityError:
+    if not users.create(username, password1):
         return 'Virhe: Tunnus on jo varattu'
 
     return 'Tunnuksen luominen onnistui'
@@ -59,10 +53,8 @@ def log_user_in():
     username = request.form['username']
     password = request.form['password']
 
-    sql = 'SELECT id, password_hash FROM users WHERE username = ?'
-    user_id, password_hash = db.query(sql, [username])[0]
-
-    if check_password_hash(password_hash, password):
+    user_id = users.login(username, password)
+    if user_id:
         session['user_id'] = user_id
         return redirect('/')
     else:
@@ -103,22 +95,15 @@ def new_image():
 
         user_id = session['user_id']
 
-        sql = 'INSERT INTO images (data, format) VALUES (?, ?)'
-        db.execute(sql, [image, file_format])
-
-        sql = """INSERT INTO posts (title, image_id, description, sent_at, user_id)
-                 VALUES (?, ?, ?, datetime('now'), ?)"""
-        db.execute(sql, [title, db.last_insert_id(), description, user_id])
-
+        posts.add(title, image, file_format, description, user_id)
         return 'Kuvan lähettäminen onnistui'
 
 @app.route('/image/<int:image_id>')
 def show_image(image_id):
-    sql = 'SELECT data, format FROM images WHERE id = ?'
-    result = db.query(sql, [image_id])
+    result = images.get(image_id)
     if not result:
         abort(404)
-    image, file_format = result[0]
+    image, file_format = result
 
     response = make_response(bytes(image))
     response.headers.set('Content-Type', 'image/'+file_format)
@@ -126,22 +111,17 @@ def show_image(image_id):
 
 @app.route('/post/<int:post_id>')
 def show_post(post_id):
-    sql = """SELECT p.id, p.title, p.image_id, p.description, p.sent_at, u.username, p.user_id
-             FROM posts p, users u
-             WHERE p.id = ? AND u.id = p.user_id"""
-    result = db.query(sql, [post_id])
-    if not result:
+    post = posts.get(post_id)
+    if not post:
         abort(404)
-    return render_template('post.html', post=result[0])
+    return render_template('post.html', post=post)
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @require_login
 def edit_post(post_id):
-    sql = 'SELECT id, title, description, user_id FROM posts WHERE id = ?'
-    result = db.query(sql, [post_id])
-    if not result:
+    post = posts.get(post_id)
+    if not post:
         abort(404)
-    post = result[0]
     if session['user_id'] != post['user_id']:
         abort(403)
 
@@ -154,30 +134,24 @@ def edit_post(post_id):
         if not title or len(title) > 100 or len(description) > 2000:
             abort(403)
 
-        sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'
-        db.execute(sql, [title, description, post_id])
+        posts.edit(post_id, title, description)
         return redirect('/post/' + str(post_id))
 
 @app.route('/remove/<int:post_id>', methods=['GET', 'POST'])
 @require_login
 def remove_post(post_id):
-    sql = 'SELECT id, image_id, user_id FROM posts WHERE id = ?'
-    result = db.query(sql, [post_id])
-    if not result:
+    user_id = posts.get_user(post_id)
+    if not user_id:
         abort(404)
-    post = result[0]
-    if session['user_id'] != post['user_id']:
+    if session['user_id'] != user_id:
         abort(403)
 
     if request.method == 'GET':
-        return render_template('remove.html', post=post)
+        return render_template('remove.html', post_id=post_id)
 
     if request.method == 'POST':
         if 'continue' in request.form:
-            sql = 'DELETE FROM posts WHERE id = ?'
-            db.execute(sql, [post_id])
-            sql = 'DELETE FROM images WHERE id = ?'
-            db.execute(sql, [post['image_id']])
+            posts.remove(post_id)
             return redirect('/')
         else:
             return redirect('/post/' + str(post_id))
@@ -185,13 +159,8 @@ def remove_post(post_id):
 @app.route('/search')
 def search():
     query = request.args.get('query')
-    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
-             FROM posts p, users u
-             WHERE u.id = p.user_id
-             AND (p.title LIKE ? OR p.description LIKE ?)
-             ORDER BY p.id DESC"""
     if query:
-        results = db.query(sql, ['%' + query + '%'] * 2)
+        results = posts.search(query)
     else:
         results = []
     return render_template('search.html', query=query, results=results)
