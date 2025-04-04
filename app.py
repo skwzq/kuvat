@@ -23,41 +23,41 @@ def index():
     posts_list = posts.get_list()
     return render_template('index.html', posts=posts_list)
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    if request.method == 'GET':
+        return render_template('register.html')
 
-@app.route('/create-user', methods=['POST'])
-def create_user():
-    username = request.form['username']
-    if not username or len(username) > 20:
-        abort(403)
+    if request.method == 'POST':
+        username = request.form['username']
+        if not username or len(username) > 20:
+            abort(403)
 
-    password1 = request.form['password1']
-    password2 = request.form['password2']
-    if password1 != password2:
-        return 'Virhe: Salasanat eivät ole samat'
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        if password1 != password2:
+            return 'Virhe: Salasanat eivät ole samat'
 
-    if not users.create(username, password1):
-        return 'Virhe: Tunnus on jo varattu'
+        if not users.create(username, password1):
+            return 'Virhe: Tunnus on jo varattu'
 
-    return 'Tunnuksen luominen onnistui'
+        return 'Tunnuksen luominen onnistui'
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'GET':
+        return render_template('login.html')
 
-@app.route('/log-user-in', methods=['POST'])
-def log_user_in():
-    username = request.form['username']
-    password = request.form['password']
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
 
-    user_id = users.login(username, password)
-    if user_id:
-        session['user_id'] = user_id
-        return redirect('/')
-    else:
-        return 'Virhe: Väärä käyttäjätunnus tai salasana'
+        user_id = users.login(username, password)
+        if user_id:
+            session['user_id'] = user_id
+            return redirect('/')
+        else:
+            return 'Virhe: Väärä käyttäjätunnus tai salasana'
 
 @app.route('/logout')
 def logout():
