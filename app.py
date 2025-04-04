@@ -1,7 +1,7 @@
 from functools import wraps
 import secrets
 from flask import Flask
-from flask import abort, make_response, redirect, render_template, request, session
+from flask import abort, flash, make_response, redirect, render_template, request, session
 import config
 import db
 import images
@@ -41,12 +41,15 @@ def register():
         password1 = request.form['password1']
         password2 = request.form['password2']
         if password1 != password2:
-            return 'Virhe: Salasanat eivät ole samat'
+            flash('Virhe: Salasanat eivät ole samat')
+            return render_template('register.html')
 
         if not users.create(username, password1):
-            return 'Virhe: Tunnus on jo varattu'
+            flash('Virhe: Tunnus on jo varattu')
+            return render_template('register.html')
 
-        return 'Tunnuksen luominen onnistui'
+        flash('Tunnuksen luominen onnistui')
+        return redirect('/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,7 +66,8 @@ def login():
             session['csrf_token'] = secrets.token_hex(16)
             return redirect('/')
         else:
-            return 'Virhe: Väärä käyttäjätunnus tai salasana'
+            flash('Virhe: Väärä käyttäjätunnus tai salasana')
+            return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -90,11 +94,13 @@ def new_post():
         elif file.filename.endswith('.png'):
             file_format = 'png'
         else:
-            return 'Virhe: Väärä tiedostomuoto'
+            flash('Virhe: Väärä tiedostomuoto')
+            return render_template('new_post.html')
 
         image = file.read()
         if len(image) > 1024**2:
-            return 'Virhe: Liian suuri tiedosto'
+            flash('Virhe: Liian suuri tiedosto')
+            return render_template('new_post.html')
 
         title = request.form['title']
         description = request.form['description']
@@ -104,7 +110,7 @@ def new_post():
         user_id = session['user_id']
 
         posts.add(title, image, file_format, description, user_id)
-        return 'Kuvan lähettäminen onnistui'
+        return redirect('/')
 
 @app.route('/image/<int:image_id>')
 def show_image(image_id):

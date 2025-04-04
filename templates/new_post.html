@@ -10,6 +10,13 @@
     <p>
       Kuvan tulee olla jpg- tai png-tiedosto, jonka koko on enintään 1 Mt.
     </p>
+
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
+
     <form action="/new-post" method="post" enctype="multipart/form-data">
       <p>
         Otsikko: <input type="text" name="title" maxlength="100" required />
