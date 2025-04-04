@@ -1,4 +1,5 @@
 from functools import wraps
+import secrets
 from flask import Flask
 from flask import abort, make_response, redirect, render_template, request, session
 import config
@@ -17,6 +18,10 @@ def require_login(f):
             abort(403)
         return f(*args, **kwargs)
     return wrapper
+
+def check_csrf():
+    if request.form['csrf_token'] != session['csrf_token']:
+        abort(403)
 
 @app.route('/')
 def index():
@@ -55,6 +60,7 @@ def login():
         user_id = users.login(username, password)
         if user_id:
             session['user_id'] = user_id
+            session['csrf_token'] = secrets.token_hex(16)
             return redirect('/')
         else:
             return 'Virhe: Väärä käyttäjätunnus tai salasana'
@@ -63,6 +69,7 @@ def login():
 def logout():
     if 'user_id' in session:
         del session['user_id']
+        del session['csrf_token']
     return redirect('/')
 
 @app.route('/new-post', methods=['GET', 'POST'])
@@ -72,6 +79,8 @@ def new_post():
         return render_template('new_post.html')
 
     if request.method == 'POST':
+        check_csrf()
+
         file = request.files['image']
         if not file:
             abort(403)
@@ -128,6 +137,8 @@ def edit_post(post_id):
         return render_template('edit.html', post=post)
 
     if request.method == 'POST':
+        check_csrf()
+
         title = request.form['title']
         description = request.form['description']
         if not title or len(title) > 100 or len(description) > 2000:
@@ -149,6 +160,8 @@ def remove_post(post_id):
         return render_template('remove.html', post_id=post_id)
 
     if request.method == 'POST':
+        check_csrf()
+
         if 'continue' in request.form:
             posts.remove(post_id)
             return redirect('/')

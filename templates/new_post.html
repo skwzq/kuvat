@@ -21,6 +21,7 @@
         Teksti:<br />
         <textarea name="description" rows="5" cols="40" maxlength="2000"></textarea>
       </p>
+      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       <input type="submit" value="Lähetä" />
     </form>
   </body>
