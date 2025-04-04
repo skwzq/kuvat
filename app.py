@@ -23,9 +23,9 @@ def index():
     posts_list = posts.get_list()
     return render_template('index.html', posts=posts_list)
 
-@app.route('/registration')
-def registration():
-    return render_template('registration.html')
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 @app.route('/create-user', methods=['POST'])
 def create_user():
@@ -65,11 +65,11 @@ def logout():
         del session['user_id']
     return redirect('/')
 
-@app.route('/new-image', methods=['GET', 'POST'])
+@app.route('/new-post', methods=['GET', 'POST'])
 @require_login
-def new_image():
+def new_post():
     if request.method == 'GET':
-        return render_template('new_image.html')
+        return render_template('new_post.html')
 
     if request.method == 'POST':
         file = request.files['image']
