@@ -1,33 +1,27 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
+{% block title %}Käyttäjätunnuksen luonti{% endblock %}
 
-  <head>
-    <title>Käyttäjätunnuksen luonti</title>
-  </head>
+{% block content %}
+{% for message in get_flashed_messages() %}
+<p>
+  <b>{{ message }}</b>
+</p>
+{% endfor %}
 
-  <body>
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
-
-    <form action="/register" method="post">
-      <p>
-        Tunnus: <br />
-        <input type="text" name="username" maxlength="20" required />
-      </p>
-      <p>
-        Salasana: <br />
-        <input type="password" name="password1" />
-      </p>
-      <p>
-        Salasana uudestaan: <br />
-        <input type="password" name="password2" />
-      </p>
-      <input type="submit" value="Luo tunnus" />
-    </form>
-  </body>
-
-</html>
+<form action="/register" method="post">
+  <p>
+    Tunnus: <br />
+    <input type="text" name="username" maxlength="20" required />
+  </p>
+  <p>
+    Salasana: <br />
+    <input type="password" name="password1" />
+  </p>
+  <p>
+    Salasana uudestaan: <br />
+    <input type="password" name="password2" />
+  </p>
+  <input type="submit" value="Luo tunnus" />
+</form>
+{% endblock %}

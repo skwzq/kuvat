@@ -1,36 +1,30 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
+{% block title %}Uusi kuva{% endblock %}
 
-  <head>
-    <title>Uusi kuva</title>
-  </head>
+{% block content %}
+<p>
+  Kuvan tulee olla jpg- tai png-tiedosto, jonka koko on enintään 1 Mt.
+</p>
 
-  <body>
-    <p>
-      Kuvan tulee olla jpg- tai png-tiedosto, jonka koko on enintään 1 Mt.
-    </p>
+{% for message in get_flashed_messages() %}
+<p>
+  <b>{{ message }}</b>
+</p>
+{% endfor %}
 
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
-
-    <form action="/new-post" method="post" enctype="multipart/form-data">
-      <p>
-        Otsikko: <input type="text" name="title" maxlength="100" required />
-      </p>
-      <p>
-        Kuva: <input type="file" name="image" accept=".jpg,.png" required />
-      </p>
-      <p>
-        Teksti:<br />
-        <textarea name="description" rows="5" cols="40" maxlength="2000"></textarea>
-      </p>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" value="Lähetä" />
-    </form>
-  </body>
-
-</html>
+<form action="/new-post" method="post" enctype="multipart/form-data">
+  <p>
+    Otsikko: <input type="text" name="title" maxlength="100" required />
+  </p>
+  <p>
+    Kuva: <input type="file" name="image" accept=".jpg,.png" required />
+  </p>
+  <p>
+    Teksti:<br />
+    <textarea name="description" rows="5" cols="40" maxlength="2000"></textarea>
+  </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lähetä" />
+</form>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+  <h1>Kuvagalleria</h1>
+
+  <p>
+    <a href="/search">Haku</a> |
+    {% if session.user_id %}
+    <a href="/new-post">Lähetä kuva</a> | <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+    <a href="/register">Luo tunnus</a> | <a href="/login">Kirjaudu sisään</a>
+    {% endif %}
+  </p>
+
+  {% block content %}{% endblock %}
+</body>
+
+</html>

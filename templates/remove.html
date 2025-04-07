@@ -1,20 +1,14 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
+{% block title %}Poisto{% endblock %}
 
-  <head>
-    <title>Poisto</title>
-  </head>
-
-  <body>
-    <form action="/remove/{{ post_id }}" method="post">
-      <p>
-        Haluatko varmasti poistaa kuvan?
-      </p>
-      <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-      <input type="submit" name="continue" value="Jatka" />
-      <input type="submit" name="cancel" value="Peruuta" />
-    </form>
-  </body>
-
-</html>
+{% block content %}
+<form action="/remove/{{ post_id }}" method="post">
+  <p>
+    Haluatko varmasti poistaa kuvan?
+  </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" name="continue" value="Jatka" />
+  <input type="submit" name="cancel" value="Peruuta" />
+</form>
+{% endblock %}

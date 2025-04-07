@@ -1,28 +1,22 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
+{% block title %}{{ post.title }}{% endblock %}
 
-  <head>
-    <title>{{ post.title }}</title>
-  </head>
+{% block content %}
+<h1>{{ post.title }}</h1>
 
-  <body>
-    <h1>{{ post.title }}</h1>
+<p>
+  {{ post.username }}, {{ post.sent_at }}
 
-    <p>
-      {{ post.username }}, {{ post.sent_at }}
+    {% if session.user_id == post.user_id %}
+    <br />
+    <a href="/edit/{{ post.id }}">Muokkaa</a> | <a href="/remove/{{ post.id }}">Poista</a>
+  {% endif %}
+</p>
 
-      {% if session.user_id == post.user_id %}
-        <br />
-        <a href="/edit/{{ post.id }}">Muokkaa</a> | <a href="/remove/{{ post.id }}">Poista</a>
-      {% endif %}
-    </p>
+<img src="/image/{{ post.image_id }}" />
 
-    <img src="/image/{{ post.image_id }}" />
-
-    <p>
-      {{ post.description }}
-    </p>
-  </body>
-
-</html>
+<p>
+  {{ post.description }}
+</p>
+{% endblock %}
