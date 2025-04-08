@@ -19,4 +19,36 @@
 <p class="whitespace">
   {{ post.description }}
 </p>
+
+<hr />
+<h1>Kommentit</h1>
+
+{% for comment in comments %}
+<hr />
+<p>
+  {{ comment.username }} ({{ comment.sent_at }}):
+</p>
+<p class="whitespace">{{ comment.content }}</p>
+
+{% if session.user_id == comment.user_id %}
+<p>
+  <a href="/edit/comment{{ comment.id }}">Muokkaa</a> |
+  <a href="/remove/comment{{ comment.id }}">Poista</a>
+</p>
+{% endif %}
+{% endfor %}
+
+{% if session.user_id %}
+<hr />
+<h2>Uusi kommentti</h2>
+
+<form action="/new-comment" method="post">
+  <p>
+    <textarea name="content" rows="5" cols="40" maxlength="2000"></textarea>
+  </p>
+  <input type="hidden" name="post_id" value="{{ post.id }}" />
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lähetä" />
+</form>
+{% endif %}
 {% endblock %}

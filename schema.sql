@@ -18,3 +18,11 @@ CREATE TABLE posts (
     sent_at TEXT,
     user_id INTEGER REFERENCES users
 );
+
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    content TEXT,
+    sent_at TEXT,
+    user_id INTEGER REFERENCES users,
+    post_id INTEGER REFERENCES posts ON DELETE CASCADE
+)

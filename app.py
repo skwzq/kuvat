@@ -128,7 +128,8 @@ def show_post(post_id):
     post = posts.get(post_id)
     if not post:
         abort(404)
-    return render_template('post.html', post=post)
+    comments = posts.get_comments(post_id)
+    return render_template('post.html', post=post, comments=comments)
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @require_login
@@ -182,6 +183,62 @@ def search():
     else:
         results = []
     return render_template('search.html', query=query, results=results)
+
+@app.route('/new-comment', methods=['POST'])
+@require_login
+def new_comment():
+    check_csrf()
+
+    content = request.form['content']
+    if len(content) > 2000:
+        abort(403)
+
+    user_id = session['user_id']
+    post_id = request.form['post_id']
+
+    posts.add_comment(content, user_id, post_id)
+    return redirect('/post/' + str(post_id))
+
+@app.route('/edit/comment<int:comment_id>', methods=['GET', 'POST'])
+@require_login
+def edit_comment(comment_id):
+    comment = posts.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if session['user_id'] != comment['user_id']:
+        abort(403)
+
+    if request.method == 'GET':
+        return render_template('edit.html', comment=comment)
+
+    if request.method == 'POST':
+        check_csrf()
+
+        content = request.form['content']
+        if len(content) > 2000:
+            abort(403)
+
+        posts.edit_comment(comment_id, content)
+        return redirect('/post/' + str(comment['post_id']))
+
+@app.route('/remove/comment<int:comment_id>', methods=['GET', 'POST'])
+@require_login
+def remove_comment(comment_id):
+    comment = posts.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if session['user_id'] != comment['user_id']:
+        abort(403)
+
+    if request.method == 'GET':
+        return render_template('remove.html', comment=comment)
+
+    if request.method == 'POST':
+        check_csrf()
+
+        if 'continue' in request.form:
+            posts.remove_comment(comment_id)
+        return redirect('/post/' + str(comment['post_id']))
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):

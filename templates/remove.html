@@ -3,10 +3,17 @@
 {% block title %}Poisto{% endblock %}
 
 {% block content %}
+{% if comment %}
+<form action="/remove/comment{{ comment.id }}" method="post">
+  <p>
+    Haluatko varmasti poistaa kommentin?
+  </p>
+{% else %}
 <form action="/remove/{{ post_id }}" method="post">
   <p>
     Haluatko varmasti poistaa kuvan?
   </p>
+{% endif %}
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" name="continue" value="Jatka" />
   <input type="submit" name="cancel" value="Peruuta" />
