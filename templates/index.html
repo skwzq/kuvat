@@ -11,10 +11,12 @@
 
 {% for post in posts %}
 <hr />
-<p>
-  <a href="/post/{{ post.id }}">{{ post.title }}</a>
-  ({{ post.username }}, {{ post.sent_at }})
-</p>
-<img src="/image/{{ post.image_id }}" />
+<div class="post">
+  <img src="/image/{{ post.image_id }}" />
+  <p>
+    <a href="/post/{{ post.id }}">{{ post.title }}</a><br />
+    {{ post.username }}, {{ post.sent_at }}
+  </p>
+</div>
 {% endfor %}
 {% endblock %}

@@ -23,11 +23,12 @@
 
 <ul>
 {% for result in results %}
-  <li>
-    <a href="/post/{{ result.id }}">{{ result.title }}</a>
-    ({{ result.username }}, {{ result.sent_at }})
-    <br />
+  <li class="post">
     <img src="/image/{{ result.image_id }}" />
+    <p>
+      <a href="/post/{{ result.id }}">{{ result.title }}</a><br />
+      {{ result.username }}, {{ result.sent_at }}
+    </p>
   </li>
 {% endfor %}
 </ul>
