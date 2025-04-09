@@ -15,7 +15,7 @@
   <img src="/image/{{ post.image_id }}" />
   <p>
     <a href="/post/{{ post.id }}">{{ post.title }}</a><br />
-    {{ post.username }}, {{ post.sent_at }}
+    <a href="/user/{{ post.user_id }}">{{ post.username }}</a>, {{ post.sent_at }}
   </p>
 </div>
 {% endfor %}

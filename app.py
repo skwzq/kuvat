@@ -240,6 +240,16 @@ def remove_comment(comment_id):
             posts.remove_comment(comment_id)
         return redirect('/post/' + str(comment['post_id']))
 
+@app.route('/user/<int:user_id>')
+def show_user(user_id):
+    user = users.get(user_id)
+    if not user:
+        abort(404)
+    posts = users.get_posts(user_id)
+    comment_count = users.count_comments(user_id)
+    return render_template('user.html', user=user, posts=posts,
+                           comment_count=comment_count)
+
 @app.teardown_appcontext
 def teardown_appcontext(exception):
     db.close_connection()

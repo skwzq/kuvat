@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
+
+{% block content %}
+<h1>Käyttäjä {{ user.username }}</h1>
+
+<p>Rekisteröitynyt {{ user.registration_date }}</p>
+<p>Kuvia: {{ posts | count }}</p>
+<p>Kommentteja: {{ comment_count }}</p>
+{% if posts %}
+<p>Viimeisin kuva lisätty {{ posts[0].sent_at }}</p>
+{% endif %}
+
+<hr />
+<h2>Kuvat</h2>
+
+<ul>
+{% for post in posts %}
+  <li class="post">
+    <img src="/image/{{ post.image_id }}" />
+    <p>
+      <a href="/post/{{ post.id }}">{{ post.title }}</a><br />
+      {{ post.sent_at }}
+    </p>
+  </li>
+{% endfor %}
+</ul>
+{% endblock %}

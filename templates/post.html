@@ -6,7 +6,7 @@
 <h1>{{ post.title }}</h1>
 
 <p>
-  {{ post.username }}, {{ post.sent_at }}
+  <a href="/user/{{ post.user_id }}">{{ post.username }}</a>, {{ post.sent_at }}
 
     {% if session.user_id == post.user_id %}
     <br />
@@ -26,7 +26,7 @@
 {% for comment in comments %}
 <hr />
 <p>
-  {{ comment.username }} ({{ comment.sent_at }}):
+  <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
 </p>
 <p class="whitespace">{{ comment.content }}</p>
 

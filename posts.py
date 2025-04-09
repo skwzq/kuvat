@@ -15,7 +15,7 @@ def get(post_id):
     return result[0] if result else None
 
 def get_list():
-    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
+    sql = """SELECT p.id, p.title, p.image_id, p.sent_at, p.user_id, u.username
              FROM posts p, users u
              WHERE u.id = p.user_id
              ORDER BY p.id DESC"""
