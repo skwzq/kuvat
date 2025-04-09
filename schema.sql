@@ -26,4 +26,11 @@ CREATE TABLE comments (
     sent_at TEXT,
     user_id INTEGER REFERENCES users,
     post_id INTEGER REFERENCES posts ON DELETE CASCADE
-)
+);
+
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY,
+    tag TEXT,
+    post_id INTEGER REFERENCES posts ON DELETE CASCADE,
+    UNIQUE(tag, post_id)
+);

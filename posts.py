@@ -1,3 +1,4 @@
+import sqlite3
 import db
 import images
 
@@ -26,6 +27,10 @@ def get_user(post_id):
     result = db.query(sql, [post_id])
     return result[0][0] if result else None
 
+def get_tags(post_id):
+    sql = 'SELECT tag FROM tags WHERE post_id = ?'
+    return [t[0] for t in db.query(sql, [post_id])]
+
 def search(query):
     sql = """SELECT p.id, p.title, p.image_id, p.sent_at, u.username
              FROM posts p, users u
@@ -34,15 +39,25 @@ def search(query):
              ORDER BY p.id DESC"""
     return db.query(sql, ['%' + query + '%'] * 2)
 
-def add(title, image, file_format, description, user_id):
+def add(title, image, file_format, description, tags, user_id):
     image_id = images.add(image, file_format)
     sql = """INSERT INTO posts (title, image_id, description, sent_at, user_id)
              VALUES (?, ?, ?, datetime('now'), ?)"""
     db.execute(sql, [title, image_id, description, user_id])
 
-def edit(post_id, title, description):
+    post_id = db.last_insert_id()
+    tags = tags.lower().split()
+    add_tags(post_id, tags)
+
+def edit(post_id, title, description, tags):
     sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'
     db.execute(sql, [title, description, post_id])
+
+    new_tags = tags.lower().split()
+    removed_tags = set(get_tags(post_id)).difference(new_tags)
+
+    add_tags(post_id, new_tags)
+    remove_tags(post_id, removed_tags)
 
 def remove(post_id):
     sql = 'SELECT image_id FROM posts WHERE id = ?'
@@ -51,6 +66,19 @@ def remove(post_id):
     sql = 'DELETE FROM posts WHERE id = ?'
     db.execute(sql, [post_id])
     images.remove(image_id)
+
+def add_tags(post_id, tags):
+    sql = 'INSERT INTO tags (tag, post_id) VALUES (?, ?)'
+    for tag in tags:
+        try:
+            db.execute(sql, [tag, post_id])
+        except sqlite3.IntegrityError:
+            pass
+
+def remove_tags(post_id, tags):
+    sql = 'DELETE FROM tags WHERE tag = ? AND post_id = ?'
+    for tag in tags:
+        db.execute(sql, [tag, post_id])
 
 def get_comment(comment_id):
     sql = 'SELECT id, content, user_id, post_id FROM comments WHERE id = ?'

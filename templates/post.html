@@ -21,6 +21,15 @@
 </p>
 
 <hr />
+<h2>Avainsanat</h2>
+
+<p>
+  {% for tag in tags %}
+  {{ tag }}
+  {% endfor %}
+</p>
+
+<hr />
 <h1>Kommentit</h1>
 
 {% for comment in comments %}

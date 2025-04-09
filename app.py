@@ -104,12 +104,13 @@ def new_post():
 
         title = request.form['title']
         description = request.form['description']
-        if not title or len(title) > 100 or len(description) > 2000:
+        tags = request.form['tags']
+        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
             abort(403)
 
         user_id = session['user_id']
 
-        posts.add(title, image, file_format, description, user_id)
+        posts.add(title, image, file_format, description, tags, user_id)
         return redirect('/')
 
 @app.route('/image/<int:image_id>')
@@ -129,7 +130,8 @@ def show_post(post_id):
     if not post:
         abort(404)
     comments = posts.get_comments(post_id)
-    return render_template('post.html', post=post, comments=comments)
+    tags = posts.get_tags(post_id)
+    return render_template('post.html', post=post, comments=comments, tags=tags)
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @require_login
@@ -141,17 +143,19 @@ def edit_post(post_id):
         abort(403)
 
     if request.method == 'GET':
-        return render_template('edit.html', post=post)
+        tags = posts.get_tags(post_id)
+        return render_template('edit.html', post=post, tags=tags)
 
     if request.method == 'POST':
         check_csrf()
 
         title = request.form['title']
         description = request.form['description']
-        if not title or len(title) > 100 or len(description) > 2000:
+        tags = request.form['tags']
+        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
             abort(403)
 
-        posts.edit(post_id, title, description)
+        posts.edit(post_id, title, description, tags)
         return redirect('/post/' + str(post_id))
 
 @app.route('/remove/<int:post_id>', methods=['GET', 'POST'])
