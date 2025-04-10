@@ -9,14 +9,21 @@
 <body>
   <h1>Kuvagalleria</h1>
 
-  <p>
-    <a href="/">Etusivu</a> | <a href="/search">Haku</a> |
+  <nav>
+    <a href="/">Etusivu</a> | <a href="/search">Haku</a>
     {% if session.user_id %}
-    <a href="/new-post">Lähetä kuva</a> | <a href="/logout">Kirjaudu ulos</a>
-    {% else %}
-    <a href="/register">Luo tunnus</a> | <a href="/login">Kirjaudu sisään</a>
+    | <a href="/new-post">Lähetä kuva</a>
     {% endif %}
-  </p>
+
+    <div class="user-links">
+    {% if session.user_id %}
+      <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+      | <a href="/logout">Kirjaudu ulos</a>
+    {% else %}
+      <a href="/login">Kirjaudu sisään</a> | <a href="/register">Luo tunnus</a>
+    {% endif %}
+    </div>
+  </nav>
 
   {% block content %}{% endblock %}
 </body>

@@ -63,6 +63,7 @@ def login():
         user_id = users.login(username, password)
         if user_id:
             session['user_id'] = user_id
+            session['username'] = username
             session['csrf_token'] = secrets.token_hex(16)
             return redirect('/')
         else:
@@ -73,6 +74,7 @@ def login():
 def logout():
     if 'user_id' in session:
         del session['user_id']
+        del session['username']
         del session['csrf_token']
     return redirect('/')
 
