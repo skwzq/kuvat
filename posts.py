@@ -32,13 +32,19 @@ def get_tags(post_id):
     return [t[0] for t in db.query(sql, [post_id])]
 
 def search(query):
-    sql = """SELECT DISTINCT p.id, p.title, p.image_id, p.sent_at, u.username
-             FROM posts p, users u, tags t
-             WHERE u.id = p.user_id
-             AND (p.title LIKE ? OR p.description LIKE ?
-                  OR (t.tag LIKE ? AND t.post_id = p.id))
+    words = query.split()
+    where = ("""AND (p.title LIKE ? OR p.description LIKE ?
+                OR (p.id IN (SELECT post_id FROM tags WHERE tag LIKE ?)))"""
+             * len(words))
+    sql = f"""SELECT DISTINCT p.id, p.title, p.image_id, p.sent_at, u.username
+             FROM posts p, users u
+             WHERE u.id = p.user_id {where}
              ORDER BY p.id DESC"""
-    return db.query(sql, ['%' + query + '%'] * 3)
+    params = []
+    for word in words:
+        for _ in range(3):
+            params.append('%' + word + '%')
+    return db.query(sql, params)
 
 def add(title, image, file_format, description, tags, user_id):
     image_id = images.add(image, file_format)
