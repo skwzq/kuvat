@@ -42,8 +42,9 @@ def search(query):
              ORDER BY p.id DESC"""
     params = []
     for word in words:
-        for _ in range(3):
-            params.append('%' + word + '%')
+        params.append('%' + word + '%')
+        params.append('%' + word + '%')
+        params.append(word)
     return db.query(sql, params)
 
 def add(title, image, file_format, description, tags, user_id):
