@@ -71,9 +71,11 @@ def edit(post_id, title, description, tags):
     db.execute(sql, [title, description, post_id])
 
     new_tags = tags.lower().split()
-    removed_tags = set(get_tags(post_id)).difference(new_tags)
+    old_tags = get_tags(post_id)
+    added_tags = set(new_tags).difference(old_tags)
+    removed_tags = set(old_tags).difference(new_tags)
 
-    add_tags(post_id, new_tags)
+    add_tags(post_id, added_tags)
     remove_tags(post_id, removed_tags)
 
 def remove(post_id):
