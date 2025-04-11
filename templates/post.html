@@ -25,7 +25,7 @@
 
 <p>
   {% for tag in tags %}
-  {{ tag }}
+  <a href="/search?query={{ tag }}&tag_only=true">{{ tag }}</a>
   {% endfor %}
 </p>
 
