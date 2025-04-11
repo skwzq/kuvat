@@ -42,11 +42,11 @@ def register():
         password2 = request.form['password2']
         if password1 != password2:
             flash('Virhe: Salasanat eivät ole samat')
-            return render_template('register.html')
+            return render_template('register.html', username=username)
 
         if not users.create(username, password1):
             flash('Virhe: Tunnus on jo varattu')
-            return render_template('register.html')
+            return render_template('register.html', username=username)
 
         flash('Tunnuksen luominen onnistui')
         return redirect('/')
@@ -69,7 +69,7 @@ def login():
             return redirect(next_page)
         else:
             flash('Virhe: Väärä käyttäjätunnus tai salasana')
-            return render_template('login.html', next_page=next_page)
+            return render_template('login.html', username=username, next_page=next_page)
 
 @app.route('/logout')
 def logout():
@@ -88,6 +88,12 @@ def new_post():
     if request.method == 'POST':
         check_csrf()
 
+        title = request.form['title']
+        description = request.form['description']
+        tags = request.form['tags']
+        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
+            abort(403)
+
         file = request.files['image']
         if not file:
             abort(403)
@@ -98,18 +104,14 @@ def new_post():
             file_format = 'png'
         else:
             flash('Virhe: Väärä tiedostomuoto')
-            return render_template('new_post.html')
+            return render_template('new_post.html', title=title,
+                                   description=description, tags=tags)
 
         image = file.read()
         if len(image) > 1024**2:
             flash('Virhe: Liian suuri tiedosto')
-            return render_template('new_post.html')
-
-        title = request.form['title']
-        description = request.form['description']
-        tags = request.form['tags']
-        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
-            abort(403)
+            return render_template('new_post.html', title=title,
+                                   description=description, tags=tags)
 
         user_id = session['user_id']
 
