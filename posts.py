@@ -56,6 +56,8 @@ def add(title, image, file_format, description, tags, user_id):
     tags = tags.lower().split()
     add_tags(post_id, tags)
 
+    return post_id
+
 def edit(post_id, title, description, tags):
     sql = 'UPDATE posts SET title = ?, description = ? WHERE id = ?'
     db.execute(sql, [title, description, post_id])

@@ -54,21 +54,22 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', next_page=request.referrer)
 
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        next_page = request.form['next_page']
 
         user_id = users.login(username, password)
         if user_id:
             session['user_id'] = user_id
             session['username'] = username
             session['csrf_token'] = secrets.token_hex(16)
-            return redirect('/')
+            return redirect(next_page)
         else:
             flash('Virhe: Väärä käyttäjätunnus tai salasana')
-            return render_template('login.html')
+            return render_template('login.html', next_page=next_page)
 
 @app.route('/logout')
 def logout():
@@ -76,7 +77,7 @@ def logout():
         del session['user_id']
         del session['username']
         del session['csrf_token']
-    return redirect('/')
+    return redirect(request.referrer)
 
 @app.route('/new-post', methods=['GET', 'POST'])
 @require_login
@@ -112,8 +113,8 @@ def new_post():
 
         user_id = session['user_id']
 
-        posts.add(title, image, file_format, description, tags, user_id)
-        return redirect('/')
+        post_id = posts.add(title, image, file_format, description, tags, user_id)
+        return redirect('/post/' + str(post_id))
 
 @app.route('/image/<int:image_id>')
 def show_image(image_id):
