@@ -16,8 +16,8 @@
 
 <img src="/image/{{ post.image_id }}" />
 
-<p class="whitespace">
-  {{ post.description }}
+<p>
+  <span class="whitespace">{{ post.description }}</span>
 </p>
 
 <hr />
@@ -37,7 +37,9 @@
 <p>
   <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
 </p>
-<p class="whitespace">{{ comment.content }}</p>
+<p>
+  <span class="whitespace">{{ comment.content }}</span>
+</p>
 
 {% if session.user_id == comment.user_id %}
 <p>
