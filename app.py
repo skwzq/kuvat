@@ -185,11 +185,13 @@ def remove_post(post_id):
 @app.route('/search')
 def search():
     query = request.args.get('query')
+    tag_only = request.args.get('tag_only')
     if query:
-        results = posts.search(query)
+        results = posts.search(query, tag_only)
     else:
         results = []
-    return render_template('search.html', query=query, results=results)
+    return render_template('search.html', query=query, tag_only=tag_only,
+                           results=results)
 
 @app.route('/new-comment', methods=['POST'])
 @require_login

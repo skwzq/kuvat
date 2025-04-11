@@ -14,6 +14,14 @@
     <input type="text" name="query" />
     {% endif %}
   </p>
+  <p>
+    {% if tag_only %}
+    <input type="checkbox" name="tag_only" value="true" checked />
+    {% else %}
+    <input type="checkbox" name="tag_only" value="true" />
+    {% endif %}
+    Etsi pelkästään avainsanoja
+  </p>
   <input type="submit" value="Hae" />
 </form>
 
