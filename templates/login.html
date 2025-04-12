@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 
-{% block title %}Sisäänkirjautuminen{% endblock %}
+{% block title %}Kirjaudu sisään{% endblock %}
 
 {% block content %}
+<h1>Kirjaudu sisään</h1>
+
 {% for message in get_flashed_messages() %}
 <p>
   <b>{{ message }}</b>

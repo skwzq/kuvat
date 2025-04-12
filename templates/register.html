@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 
-{% block title %}Käyttäjätunnuksen luonti{% endblock %}
+{% block title %}Luo tunnus{% endblock %}
 
 {% block content %}
+<h1>Luo tunnus</h1>
+
 {% for message in get_flashed_messages() %}
 <p>
   <b>{{ message }}</b>

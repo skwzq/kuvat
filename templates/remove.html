@@ -1,14 +1,22 @@
 {% extends "layout.html" %}
 
-{% block title %}Poisto{% endblock %}
+{% block title %}
+{% if comment %}
+Poista kommentti
+{% else %}
+Poista kuva
+{% endif %}
+{% endblock %}
 
 {% block content %}
 {% if comment %}
+<h1>Poista kommentti</h1>
 <form action="/remove/comment{{ comment.id }}" method="post">
   <p>
     Haluatko varmasti poistaa kommentin?
   </p>
 {% else %}
+<h1>Poista kuva</h1>
 <form action="/remove/{{ post_id }}" method="post">
   <p>
     Haluatko varmasti poistaa kuvan?

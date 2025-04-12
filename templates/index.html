@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Etusivu{% endblock %}
+{% block title %}Kuvagalleria{% endblock %}
 
 {% block content %}
 {% for message in get_flashed_messages() %}
@@ -8,6 +8,8 @@
   <b>{{ message }}</b>
 </p>
 {% endfor %}
+
+<h1>Kuvat</h1>
 
 {% for post in posts %}
 <hr />
