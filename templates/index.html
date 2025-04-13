@@ -4,15 +4,14 @@
 
 {% block content %}
 {% for message in get_flashed_messages() %}
-<p>
-  <b>{{ message }}</b>
+<p class="info">
+  {{ message }}
 </p>
 {% endfor %}
 
-<h1>Kuvat</h1>
+<h2>Kuvat</h2>
 
 {% for post in posts %}
-<hr />
 <div class="post">
   <img src="/image/{{ post.image_id }}" />
   <p>

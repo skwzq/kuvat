@@ -3,7 +3,7 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ post.title }}</h1>
+<h2>{{ post.title }}</h2>
 
 <p>
   <a href="/user/{{ post.user_id }}">{{ post.username }}</a>, {{ post.sent_at }}
@@ -21,7 +21,7 @@
 </p>
 
 <hr />
-<h2>Avainsanat</h2>
+<h3>Avainsanat</h3>
 
 <p>
   {% for tag in tags %}
@@ -30,28 +30,28 @@
 </p>
 
 <hr />
-<h1>Kommentit</h1>
+<h3>Kommentit</h3>
 
 {% for comment in comments %}
-<hr />
-<p>
-  <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
-</p>
-<p>
-  <span class="whitespace">{{ comment.content }}</span>
-</p>
+<div class="comment">
+  <p>
+    <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
+  </p>
+  <p>
+    <span class="whitespace">{{ comment.content }}</span>
+  </p>
 
-{% if session.user_id == comment.user_id %}
-<p>
-  <a href="/edit/comment{{ comment.id }}">Muokkaa</a> |
-  <a href="/remove/comment{{ comment.id }}">Poista</a>
-</p>
-{% endif %}
+  {% if session.user_id == comment.user_id %}
+  <p>
+    <a href="/edit/comment{{ comment.id }}">Muokkaa</a> |
+    <a href="/remove/comment{{ comment.id }}">Poista</a>
+  </p>
+  {% endif %}
+</div>
 {% endfor %}
 
 {% if session.user_id %}
-<hr />
-<h2>Uusi kommentti</h2>
+<h4>Uusi kommentti</h4>
 
 <form action="/new-comment" method="post">
   <p>

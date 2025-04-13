@@ -10,13 +10,13 @@ Poista kuva
 
 {% block content %}
 {% if comment %}
-<h1>Poista kommentti</h1>
+<h2>Poista kommentti</h2>
 <form action="/remove/comment{{ comment.id }}" method="post">
   <p>
     Haluatko varmasti poistaa kommentin?
   </p>
 {% else %}
-<h1>Poista kuva</h1>
+<h2>Poista kuva</h2>
 <form action="/remove/{{ post_id }}" method="post">
   <p>
     Haluatko varmasti poistaa kuvan?

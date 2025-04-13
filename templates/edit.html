@@ -10,13 +10,13 @@ Muokkaa kuvan tietoja
 
 {% block content %}
 {% if comment %}
-<h1>Muokkaa kommenttia</h1>
+<h2>Muokkaa kommenttia</h2>
 <form action="/edit/comment{{ comment.id }}" method="post">
   <p>
     <textarea name="content" rows="5" cols="40" maxlength="2000">{{ comment.content }}</textarea>
   </p>
 {% else %}
-<h1>Muokkaa kuvan tietoja</h1>
+<h2>Muokkaa kuvan tietoja</h2>
 <form action="/edit/{{ post.id }}" method="post">
   <p>
     Otsikko: <input type="text" name="title" value="{{ post.title }}" maxlength="100" required />

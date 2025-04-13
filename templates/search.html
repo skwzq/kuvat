@@ -3,7 +3,7 @@
 {% block title %}Haku{% endblock %}
 
 {% block content %}
-<h1>Haku</h1>
+<h2>Haku</h2>
 
 <form action="/search" method="get">
   <p>
@@ -27,7 +27,7 @@
 
 {% if query %}
 <hr />
-<h2>Tulokset</h2>
+<h3>Tulokset</h3>
 
 <ul>
 {% for result in results %}

@@ -2,6 +2,9 @@ body {
   margin: auto;
   max-width: 60em;
   overflow-wrap: break-word;
+  font-family: sans-serif;
+  background-image: linear-gradient(rgb(79, 136, 182), lightsteelblue);
+  background-attachment: fixed;
 }
 
 img {
@@ -10,16 +13,54 @@ img {
   object-fit: contain;
 }
 
-li {
-  padding: 0.5em 0;
+ul {
+  padding: 0;
+  margin: 1em;
 }
 
 nav {
   position: relative;
+  padding: 0.5em;
+  background-color: rgb(57, 103, 139);
+  color: white;
+}
+
+nav a:link, nav a:visited {
+  color: white;
+}
+
+nav a:hover {
+  color: lightsteelblue;
+}
+
+nav a:active {
+  color: greenyellow;
+}
+
+a:link, a:visited {
+  color: darkslategray;
+}
+
+a:active {
+  color: limegreen;
+}
+
+hr {
+  color: lightsteelblue;
+}
+
+h2 {
+  margin: 0;
+}
+
+.content {
+  padding: 1em;
+  background-color: rgba(240, 248, 255, 0.75);
 }
 
 .post {
   display: flex;
+  margin: 1.5em 1em;
 }
 
 .post img {
@@ -29,16 +70,28 @@ nav {
 }
 
 .post p {
-  margin: 0;
-  padding: 0.2em 1em;
+  margin: 0.2em 1em;
   max-width: calc(100% - 6em);
+}
+
+li.post {
+  margin: 0.5em 0;
+}
+
+.comment {
+  border-bottom: 1px solid lightsteelblue;
 }
 
 .user-links {
   position: absolute;
-  right: 0
+  right: 0.5em
 }
 
 .whitespace {
   white-space: pre-wrap;
+}
+
+.info {
+  padding: 0.3em;
+  background-color: rgba(255, 255, 255, 0.5);
 }

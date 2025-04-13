@@ -3,7 +3,7 @@
 {% block title %}Käyttäjä {{ user.username }}{% endblock %}
 
 {% block content %}
-<h1>Käyttäjä {{ user.username }}</h1>
+<h2>Käyttäjä {{ user.username }}</h2>
 
 <p>Rekisteröitynyt {{ user.registration_date }}</p>
 <p>Kuvia: {{ posts | count }}</p>
@@ -13,7 +13,7 @@
 {% endif %}
 
 <hr />
-<h2>Kuvat</h2>
+<h3>Kuvat</h3>
 
 <ul>
 {% for post in posts %}
