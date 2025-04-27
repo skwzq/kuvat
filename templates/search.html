@@ -30,7 +30,7 @@
 <h3>Tulokset</h3>
 
 <ul>
-{% for result in results %}
+  {% for result in results %}
   <li class="post">
     <img src="/image/{{ result.image_id }}" />
     <p>
@@ -38,7 +38,7 @@
       {{ result.username }}, {{ result.sent_at }}
     </p>
   </li>
-{% endfor %}
+  {% endfor %}
 </ul>
 {% endif %}
 {% endblock %}

@@ -1,15 +1,19 @@
-from functools import wraps
 import secrets
-from flask import Flask
-from flask import abort, flash, make_response, redirect, render_template, request, session
+from functools import wraps
+
+from flask import (Flask, abort, flash, make_response, redirect,
+                   render_template, request, session)
+
 import config
 import db
 import images
 import posts
 import users
 
+
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
 
 def require_login(f):
     @wraps(f)
@@ -19,14 +23,17 @@ def require_login(f):
         return f(*args, **kwargs)
     return wrapper
 
+
 def check_csrf():
     if request.form['csrf_token'] != session['csrf_token']:
         abort(403)
+
 
 @app.route('/')
 def index():
     posts_list = posts.get_list()
     return render_template('index.html', posts=posts_list)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -51,6 +58,7 @@ def register():
         flash('Tunnuksen luominen onnistui')
         return redirect('/')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
@@ -62,14 +70,16 @@ def login():
         next_page = request.form['next_page']
 
         user_id = users.login(username, password)
-        if user_id:
-            session['user_id'] = user_id
-            session['username'] = username
-            session['csrf_token'] = secrets.token_hex(16)
-            return redirect(next_page)
-        else:
+        if not user_id:
             flash('Virhe: Väärä käyttäjätunnus tai salasana')
-            return render_template('login.html', username=username, next_page=next_page)
+            return render_template('login.html', username=username,
+                                   next_page=next_page)
+
+        session['user_id'] = user_id
+        session['username'] = username
+        session['csrf_token'] = secrets.token_hex(16)
+        return redirect(next_page)
+
 
 @app.route('/logout')
 def logout():
@@ -78,6 +88,7 @@ def logout():
         del session['username']
         del session['csrf_token']
     return redirect('/')
+
 
 @app.route('/new-post', methods=['GET', 'POST'])
 @require_login
@@ -91,7 +102,8 @@ def new_post():
         title = request.form['title']
         description = request.form['description']
         tags = request.form['tags']
-        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
+        if (not title or len(title) > 100 or len(description) > 2000
+            or len(tags) > 500):
             abort(403)
 
         file = request.files['image']
@@ -115,8 +127,10 @@ def new_post():
 
         user_id = session['user_id']
 
-        post_id = posts.add(title, image, file_format, description, tags, user_id)
+        post_id = posts.add(title, image, file_format, description, tags,
+                            user_id)
         return redirect('/post/' + str(post_id))
+
 
 @app.route('/image/<int:image_id>')
 def show_image(image_id):
@@ -126,8 +140,9 @@ def show_image(image_id):
     image, file_format = result
 
     response = make_response(bytes(image))
-    response.headers.set('Content-Type', 'image/'+file_format)
+    response.headers.set('Content-Type', 'image/' + file_format)
     return response
+
 
 @app.route('/post/<int:post_id>')
 def show_post(post_id):
@@ -136,7 +151,9 @@ def show_post(post_id):
         abort(404)
     comments = posts.get_comments(post_id)
     tags = posts.get_tags(post_id)
-    return render_template('post.html', post=post, comments=comments, tags=tags)
+    return render_template('post.html', post=post, comments=comments,
+                           tags=tags)
+
 
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @require_login
@@ -157,11 +174,13 @@ def edit_post(post_id):
         title = request.form['title']
         description = request.form['description']
         tags = request.form['tags']
-        if not title or len(title) > 100 or len(description) > 2000 or len(tags) > 500:
+        if (not title or len(title) > 100 or len(description) > 2000
+            or len(tags) > 500):
             abort(403)
 
         posts.edit(post_id, title, description, tags)
         return redirect('/post/' + str(post_id))
+
 
 @app.route('/remove/<int:post_id>', methods=['GET', 'POST'])
 @require_login
@@ -181,8 +200,8 @@ def remove_post(post_id):
         if 'continue' in request.form:
             posts.remove(post_id)
             return redirect('/')
-        else:
-            return redirect('/post/' + str(post_id))
+        return redirect('/post/' + str(post_id))
+
 
 @app.route('/search')
 def search():
@@ -194,6 +213,7 @@ def search():
         results = []
     return render_template('search.html', query=query, tag_only=tag_only,
                            results=results)
+
 
 @app.route('/new-comment', methods=['POST'])
 @require_login
@@ -209,6 +229,7 @@ def new_comment():
 
     posts.add_comment(content, user_id, post_id)
     return redirect('/post/' + str(post_id))
+
 
 @app.route('/edit/comment<int:comment_id>', methods=['GET', 'POST'])
 @require_login
@@ -232,6 +253,7 @@ def edit_comment(comment_id):
         posts.edit_comment(comment_id, content)
         return redirect('/post/' + str(comment['post_id']))
 
+
 @app.route('/remove/comment<int:comment_id>', methods=['GET', 'POST'])
 @require_login
 def remove_comment(comment_id):
@@ -251,15 +273,17 @@ def remove_comment(comment_id):
             posts.remove_comment(comment_id)
         return redirect('/post/' + str(comment['post_id']))
 
+
 @app.route('/user/<int:user_id>')
 def show_user(user_id):
     user = users.get(user_id)
     if not user:
         abort(404)
-    posts = users.get_posts(user_id)
+    user_posts = users.get_posts(user_id)
     comment_count = users.count_comments(user_id)
-    return render_template('user.html', user=user, posts=posts,
+    return render_template('user.html', user=user, posts=user_posts,
                            comment_count=comment_count)
+
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):

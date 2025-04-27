@@ -7,17 +7,16 @@
 
 <p>
   <a href="/user/{{ post.user_id }}">{{ post.username }}</a>, {{ post.sent_at }}
-
-    {% if session.user_id == post.user_id %}
-    <br />
-    <a href="/edit/{{ post.id }}">Muokkaa</a> | <a href="/remove/{{ post.id }}">Poista</a>
+  {% if session.user_id == post.user_id %}
+  <br />
+  <a href="/edit/{{ post.id }}">Muokkaa</a> | <a href="/remove/{{ post.id }}">Poista</a>
   {% endif %}
 </p>
 
 <img src="/image/{{ post.image_id }}" />
 
 <p>
-  <span class="whitespace">{{ post.description }}</span>
+  <span class="preserve-whitespace">{{ post.description }}</span>
 </p>
 
 <hr />
@@ -38,7 +37,7 @@
     <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ({{ comment.sent_at }}):
   </p>
   <p>
-    <span class="whitespace">{{ comment.content }}</span>
+    <span class="preserve-whitespace">{{ comment.content }}</span>
   </p>
 
   {% if session.user_id == comment.user_id %}

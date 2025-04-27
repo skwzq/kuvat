@@ -1,11 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-{% if comment %}
-Muokkaa kommenttia
-{% else %}
-Muokkaa kuvan tietoja
-{% endif %}
+{% if comment %}Muokkaa kommenttia{% else %}Muokkaa kuvan tietoja{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -23,11 +19,13 @@ Muokkaa kuvan tietoja
   </p>
   <p>
     Teksti:<br />
-    <textarea name="description" rows="5" cols="40" maxlength="2000">{{ post.description }}</textarea>
+    <textarea name="description" rows="5" cols="40" maxlength="2000"
+    >{{ post.description }}</textarea>
   </p>
   <p>
     Avainsanat (erotettuna toisistaan välilyönneillä tai rivinvaihdoilla):<br />
-    <textarea name="tags" rows="2" cols="40" maxlength="500">{% for tag in tags %}{{ tag }} {% endfor %}</textarea>
+    <textarea name="tags" rows="2" cols="40" maxlength="500"
+    >{% for tag in tags %}{{ tag }} {% endfor %}</textarea>
   </p>
 {% endif %}
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

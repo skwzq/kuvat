@@ -1,6 +1,9 @@
 import sqlite3
+
 from werkzeug.security import check_password_hash, generate_password_hash
+
 import db
+
 
 def login(username, password):
     sql = 'SELECT id, password_hash FROM users WHERE username = ?'
@@ -10,8 +13,8 @@ def login(username, password):
     user_id, password_hash = result[0]
     if check_password_hash(password_hash, password):
         return user_id
-    else:
-        return None
+    return None
+
 
 def create(username, password):
     password_hash = generate_password_hash(password)
@@ -24,10 +27,12 @@ def create(username, password):
         return False
     return True
 
+
 def get(user_id):
     sql = 'SELECT id, username, registration_date FROM users WHERE id = ?'
     result = db.query(sql, [user_id])
     return result[0] if result else None
+
 
 def get_posts(user_id):
     sql = """SELECT p.id, p.title, p.image_id, p.sent_at
@@ -36,6 +41,9 @@ def get_posts(user_id):
              ORDER BY p.id DESC"""
     return db.query(sql, [user_id])
 
+
 def count_comments(user_id):
-    sql = 'SELECT COUNT(*) FROM comments c, users u WHERE u.id = ? AND c.user_id = u.id'
+    sql = """SELECT COUNT(*)
+             FROM comments c, users u
+             WHERE u.id = ? AND c.user_id = u.id"""
     return db.query(sql, [user_id])[0][0]

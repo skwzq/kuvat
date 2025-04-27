@@ -16,7 +16,7 @@
 <h3>Kuvat</h3>
 
 <ul>
-{% for post in posts %}
+  {% for post in posts %}
   <li class="post">
     <img src="/image/{{ post.image_id }}" />
     <p>
@@ -24,6 +24,6 @@
       {{ post.sent_at }}
     </p>
   </li>
-{% endfor %}
+  {% endfor %}
 </ul>
 {% endblock %}

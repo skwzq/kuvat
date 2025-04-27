@@ -25,7 +25,8 @@ nav {
   color: white;
 }
 
-nav a:link, nav a:visited {
+nav a:link,
+nav a:visited {
   color: white;
 }
 
@@ -37,7 +38,8 @@ nav a:active {
   color: greenyellow;
 }
 
-a:link, a:visited {
+a:link,
+a:visited {
   color: darkslategray;
 }
 
@@ -87,7 +89,7 @@ li.post {
   right: 0.5em
 }
 
-.whitespace {
+.preserve-whitespace {
   white-space: pre-wrap;
 }
 
