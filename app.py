@@ -77,7 +77,7 @@ def logout():
         del session['user_id']
         del session['username']
         del session['csrf_token']
-    return redirect(request.referrer)
+    return redirect('/')
 
 @app.route('/new-post', methods=['GET', 'POST'])
 @require_login
