@@ -35,11 +35,11 @@ def register():
 
     if request.method == 'POST':
         username = request.form['username']
-        if not username or len(username) > 20:
-            abort(403)
-
         password1 = request.form['password1']
         password2 = request.form['password2']
+        if not username or len(username) > 20 or not password1:
+            abort(403)
+
         if password1 != password2:
             flash('Virhe: Salasanat eivät ole samat')
             return render_template('register.html', username=username)
